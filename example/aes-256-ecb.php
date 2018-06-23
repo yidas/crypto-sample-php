@@ -8,14 +8,13 @@ ini_set("display_errors", 1);
  */
 
 // Setting
-// Same as old rijndael-128 Mode ecb 
+// Same as old rijndael-128 Mode ECB 
 $cipher ="AES-256-ECB";
 
 // Encryption
 $plaintext = "message to be encrypted";
 $key = 'd41d8cd98f00b204e9800998ecf8427e';
 
-// $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
 $chiperRaw = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA);
 $ciphertext = trim(base64_encode($chiperRaw));
 $cipherHex = bin2hex($chiperRaw);
@@ -23,7 +22,6 @@ $cipherHex = bin2hex($chiperRaw);
 // Decryption
 $key = 'd41d8cd98f00b204e9800998ecf8427e';
 $chiperRaw = base64_decode($ciphertext);
-// $iv = substr($chiperRaw, 0, openssl_cipher_iv_length($cipher));
 $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA);
 
 ?>
@@ -37,7 +35,6 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/mode-ecb.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/pad-zeropadding-min.js"></script> -->
 </head>
 <body>
     
@@ -69,14 +66,17 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
         
         var plaintext = "<?=$plaintext?>";
         var key = "<?=$key?>";
+        var KeyObj = CryptoJS.enc.Utf8.parse(key);
         
-        var encrypted = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key), { mode: CryptoJS.mode.ECB });
+        var encrypted = CryptoJS.AES.encrypt(plaintext, KeyObj, { 
+            mode: CryptoJS.mode.ECB 
+        });
 
-        var decrypted = CryptoJS.AES.decrypt(encrypted, CryptoJS.enc.Utf8.parse(key), { 
+        var decrypted = CryptoJS.AES.decrypt(encrypted, KeyObj, { 
             mode: CryptoJS.mode.ECB, 
         });
 
-        var decryptedFromPHP = CryptoJS.AES.decrypt("<?=$ciphertext?>", CryptoJS.enc.Utf8.parse(key), { 
+        var decryptedFromPHP = CryptoJS.AES.decrypt("<?=$ciphertext?>", KeyObj, { 
             mode: CryptoJS.mode.ECB, 
         });
 

@@ -52,8 +52,8 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
     <h1>PHP</h1>
     <p>Cipher Text</p> 
     <textarea name="" id="" cols="100" rows="2"><?=$ciphertext?></textarea>
-    <!-- <p>Cipher Text (Hex)</p> 
-    <textarea name="" id="" cols="100" rows="2"><?=$cipherHex?></textarea> -->
+    <p>IV Text (Base64)</p> 
+    <textarea name="" id="" cols="100" rows="1"><?=$ivText?></textarea>
     <p>Decrypted Plaintext</p> 
     <textarea name="" id="" cols="100" rows="1"><?=$originalPlaintext?></textarea>
 
@@ -62,6 +62,8 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
     <h1>Javascript</h1>
     <p>Cipher Text</p> 
     <textarea name="" id="js-cipher-text" cols="100" rows="2"></textarea>
+    <p>IV Text (Hex)</p> 
+    <textarea name="" id="js-iv" cols="100" rows="1"></textarea>
     <p>Decrypted Plaintext</p> 
     <textarea name="" id="js-decrypted" cols="100" rows="1"></textarea>
     <p>Decrypted from PHP cipher text</p> 
@@ -89,6 +91,7 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
         });
 
         document.getElementById("js-cipher-text").innerHTML = encrypted.toString();
+        document.getElementById("js-iv").innerHTML = encrypted.iv.toString();
         document.getElementById("js-decrypted").innerHTML = decrypted.toString(CryptoJS.enc.Utf8);;
         document.getElementById("js-decrypted-from-php").innerHTML = decryptedFromPHP.toString(CryptoJS.enc.Utf8);
     </script>
