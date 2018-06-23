@@ -103,17 +103,18 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
         var plaintext = "<?=$plaintext?>";
         var key = "<?=$key?>";
         var keyObj = CryptoJS.enc.Utf8.parse(key);
+        // IV from PHP
         var iv = "<?=$ivText?>";
         
         // Default mode is CBC, giving self-created IV with default padding 
         var encrypted = CryptoJS.AES.encrypt(plaintext, keyObj, {
-            iv: CryptoJS.enc.Base64.parse(iv),
+            iv: CryptoJS.enc.Hex.parse('f0b53b2da041fca49ef0b9839060b345'),
         });
         console.log(encrypted);
 
-        // Giving IV to specify decryption same as encryption
+        // Giving IV from encrypt data
         var decrypted = CryptoJS.AES.decrypt(encrypted, keyObj, {
-            iv: CryptoJS.enc.Base64.parse(iv),
+            iv: CryptoJS.enc.Hex.parse(encrypted.iv.toString()),
         });
 
         // Decrypt from PHP
