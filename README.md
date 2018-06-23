@@ -15,7 +15,7 @@ CONCEPTION
 
 [Advanced Encryption Standard (AES)](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard), a subset of the Rijndael cipher, which is a symmetric-key algorithm, meaning the same key is used for both encrypting and decrypting the data.
 
-### Block cipher mode of operation
+### Block Cipher Mode of Operation
 
 - ECB - Same cipher text with same plain text. No use of IV.
 
