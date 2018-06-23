@@ -8,23 +8,23 @@ ini_set("display_errors", 1);
  */
 
 // Setting
-// Same as old rijndael-128 Mode ecb 
-$cipher ="AES-256-ECB";
+$cipher ="AES-256-CBC";
 
 // Encryption
 $plaintext = "message to be encrypted";
 $key = 'd41d8cd98f00b204e9800998ecf8427e';
 
-// $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
-$chiperRaw = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA);
+$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
+$ivText = base64_encode($iv);
+$chiperRaw = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA, $iv);
 $ciphertext = trim(base64_encode($chiperRaw));
 $cipherHex = bin2hex($chiperRaw);
 
 // Decryption
 $key = 'd41d8cd98f00b204e9800998ecf8427e';
+$iv = base64_decode($ivText);
 $chiperRaw = base64_decode($ciphertext);
-// $iv = substr($chiperRaw, 0, openssl_cipher_iv_length($cipher));
-$originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA);
+$originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA, $iv);
 
 ?>
 
@@ -36,8 +36,11 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
     <title>PHP Encryption</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/mode-ecb.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/pad-zeropadding-min.js"></script> -->
+
+    <!-- Padding Libraries -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/pad-zeropadding-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/pad-nopadding-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/pad-ansix923-min.js"></script> -->
 </head>
 <body>
     
@@ -69,15 +72,20 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
         
         var plaintext = "<?=$plaintext?>";
         var key = "<?=$key?>";
+        var KeyObj = CryptoJS.enc.Utf8.parse(key);
+        var iv = "<?=$ivText?>";
         
-        var encrypted = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key), { mode: CryptoJS.mode.ECB });
+        // Default mode is CBC, IV would be auto-created in encrypted object
+        var encrypted = CryptoJS.AES.encrypt(plaintext, key);
+        console.log(encrypted);
 
-        var decrypted = CryptoJS.AES.decrypt(encrypted, CryptoJS.enc.Utf8.parse(key), { 
-            mode: CryptoJS.mode.ECB, 
-        });
+        // The encrypted object includes IV, padding info to decrypt
+        var decrypted = CryptoJS.AES.decrypt(encrypted, key);
 
-        var decryptedFromPHP = CryptoJS.AES.decrypt("<?=$ciphertext?>", CryptoJS.enc.Utf8.parse(key), { 
-            mode: CryptoJS.mode.ECB, 
+        // Custom IV input by parameter with default CBC mode
+        var decryptedFromPHP = CryptoJS.AES.decrypt("<?=$ciphertext?>", KeyObj, { 
+            // mode: CryptoJS.mode.CBC, 
+            iv: CryptoJS.enc.Base64.parse(iv),
         });
 
         document.getElementById("js-cipher-text").innerHTML = encrypted.toString();
