@@ -16,3 +16,5 @@ REFERENCE
 [CryptoJS Github](https://github.com/brix/crypto-js)
 
 [CryptoJS Google Documentation](https://code.google.com/archive/p/crypto-js/)
+
+[CryptoJS Library CDN](https://cdnjs.com/libraries/crypto-js)
