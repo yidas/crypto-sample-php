@@ -9,10 +9,29 @@ ini_set("display_errors", 1);
 
 // Setting
 $cipher ="AES-256-CBC";
+$key = 'd41d8cd98f00b204e9800998ecf8427e';
+
+
+/**
+ * Decrpyt from JS cipher & IV
+ */
+if ($_POST) {
+
+    // Data fetching
+    $jsCipherText = isset($_POST['js_cipher_text']) ? $_POST['js_cipher_text'] : '';
+    $ivHex = isset($_POST['js_iv']) ? $_POST['js_iv'] : '';
+
+    // Decoding
+    $chiperRaw = base64_decode($jsCipherText);
+    $iv = hex2bin($ivHex);
+
+    // Decryption
+    $jsOriginalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+}
+
 
 // Encryption
 $plaintext = "message to be encrypted";
-$key = 'd41d8cd98f00b204e9800998ecf8427e';
 
 $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
 $ivText = base64_encode($iv);
@@ -44,54 +63,69 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
 </head>
 <body>
     
+  
     <p>Plaintext</p>
-    <textarea name="" id="" cols="100" rows="1"><?=$plaintext?></textarea>
+    <textarea name="" id="" cols="100" rows="1" readonly><?=$plaintext?></textarea>
     <p>Key</p>
-    <textarea name="" id="" cols="100" rows="1"><?=$key?></textarea>
+    <textarea name="" id="" cols="100" rows="1" readonly><?=$key?></textarea>
     
     <h1>PHP</h1>
     <p>Cipher Text</p> 
-    <textarea name="" id="" cols="100" rows="2"><?=$ciphertext?></textarea>
+    <textarea name="" id="" cols="100" rows="2" readonly><?=$ciphertext?></textarea>
     <p>IV Text (Base64)</p> 
-    <textarea name="" id="" cols="100" rows="1"><?=$ivText?></textarea>
+    <textarea name="" id="" cols="100" rows="1" readonly><?=$ivText?></textarea>
     <p>Decrypted Plaintext</p> 
-    <textarea name="" id="" cols="100" rows="1"><?=$originalPlaintext?></textarea>
+    <textarea name="" id="" cols="100" rows="1" readonly><?=$originalPlaintext?></textarea>
+    <p>Decrypted from JS cipher text <font color="gray">(<?php if(isset($jsOriginalPlaintext)): ?>JS Cipher sent<?php else: ?>No data sent yet<?php endif ?>)</font></p> 
+    <textarea name="" id="" cols="100" rows="1" readonly><?=isset($jsOriginalPlaintext) ? $jsOriginalPlaintext : null?></textarea>
 
     <hr>
 
-    <h1>Javascript</h1>
-    <p>Cipher Text</p> 
-    <textarea name="" id="js-cipher-text" cols="100" rows="2"></textarea>
-    <p>IV Text (Hex)</p> 
-    <textarea name="" id="js-iv" cols="100" rows="1"></textarea>
-    <p>Decrypted Plaintext</p> 
-    <textarea name="" id="js-decrypted" cols="100" rows="1"></textarea>
-    <p>Decrypted from PHP cipher text</p> 
-    <textarea name="" id="js-decrypted-from-php" cols="100" rows="1"></textarea>
-    
+    <form action="" method="POST"> 
+        <h1>Javascript</h1>
+        <p>Cipher Text</p> 
+        <textarea name="js_cipher_text" id="js-cipher-text" cols="100" rows="2" readonly></textarea>
+        <p>IV Text (Hex)</p> 
+        <textarea name="js_iv" id="js-iv" cols="100" rows="1" readonly></textarea>
+        <p>Salt (Hex) <font color="gray">(Salt would be auto-created by default method without params)</font></p> 
+        <textarea name="" id="js-salt" cols="100" rows="1" readonly></textarea>
+        <p>Decrypted Plaintext</p> 
+        <textarea name="" id="js-decrypted" cols="100" rows="1" readonly></textarea>
+        <p>Decrypted from PHP cipher text</p> 
+        <textarea name="" id="js-decrypted-from-php" cols="100" rows="1" readonly></textarea>
+        <br><br>
+        <button type="submit">Send Cipher & IV to PHP for Decrypting</button>
+        <button type="button" onclick="location.href=''">Reset</button>
+    </form>  
     
     <script>
         
         var plaintext = "<?=$plaintext?>";
         var key = "<?=$key?>";
-        var KeyObj = CryptoJS.enc.Utf8.parse(key);
+        var keyObj = CryptoJS.enc.Utf8.parse(key);
         var iv = "<?=$ivText?>";
         
-        // Default mode is CBC, IV would be auto-created in encrypted object
-        var encrypted = CryptoJS.AES.encrypt(plaintext, key);
+        // Default mode is CBC, giving self-created IV with default padding 
+        var encrypted = CryptoJS.AES.encrypt(plaintext, keyObj, {
+            iv: CryptoJS.enc.Base64.parse(iv),
+        });
         console.log(encrypted);
 
-        // The encrypted object includes IV, padding info to decrypt
-        var decrypted = CryptoJS.AES.decrypt(encrypted, key);
+        // Giving IV to specify decryption same as encryption
+        var decrypted = CryptoJS.AES.decrypt(encrypted, keyObj, {
+            iv: CryptoJS.enc.Base64.parse(iv),
+        });
 
+        // Decrypt from PHP
         // Custom IV input by parameter with default CBC mode
-        var decryptedFromPHP = CryptoJS.AES.decrypt("<?=$ciphertext?>", KeyObj, { 
+        var decryptedFromPHP = CryptoJS.AES.decrypt("<?=$ciphertext?>", keyObj, { 
             // mode: CryptoJS.mode.CBC, 
             iv: CryptoJS.enc.Base64.parse(iv),
         });
 
         document.getElementById("js-cipher-text").innerHTML = encrypted.toString();
         document.getElementById("js-iv").innerHTML = encrypted.iv.toString();
+        // document.getElementById("js-salt").innerHTML = encrypted.salt.toString();
         document.getElementById("js-decrypted").innerHTML = decrypted.toString(CryptoJS.enc.Utf8);;
         document.getElementById("js-decrypted-from-php").innerHTML = decryptedFromPHP.toString(CryptoJS.enc.Utf8);
     </script>
