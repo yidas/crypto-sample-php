@@ -1,7 +1,7 @@
-PHP AES CryptoJS
+Crypto Sample for PHP
 ================
 
-AES Encryption/Decryption between PHP server and CryptoJS 3.x client
+PHP sample code for symmetric and asymmetric cryptography with encryption and decryption
 
 FEATURES
 --------
