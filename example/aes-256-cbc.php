@@ -72,6 +72,8 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
     <h1>PHP</h1>
     <p>Cipher Text</p> 
     <textarea name="" id="" cols="100" rows="2" readonly><?=$ciphertext?></textarea>
+    <!-- <p>IV Text</p> 
+    <textarea name="" id="" cols="100" rows="1" readonly><?=$iv?></textarea> -->
     <p>IV Text (Base64)</p> 
     <textarea name="" id="" cols="100" rows="1" readonly><?=$ivText?></textarea>
     <p>Decrypted Plaintext</p> 
@@ -84,11 +86,11 @@ $originalPlaintext = openssl_decrypt($chiperRaw, $cipher, $key, OPENSSL_RAW_DATA
     <form action="" method="POST"> 
         <h1>Javascript</h1>
         <p>Cipher Text</p> 
-        <textarea name="js_cipher_text" id="js-cipher-text" cols="100" rows="2" readonly></textarea>
+        <textarea name="js_cipher_text" id="js-cipher-text" cols="100" rows="2"></textarea>
         <p>IV Text (Hex)</p> 
-        <textarea name="js_iv" id="js-iv" cols="100" rows="1" readonly></textarea>
+        <textarea name="js_iv" id="js-iv" cols="100" rows="1"></textarea>
         <p>Salt (Hex) <font color="gray">(Salt would be auto-created by default method without params)</font></p> 
-        <textarea name="" id="js-salt" cols="100" rows="1" readonly></textarea>
+        <textarea name="" id="js-salt" cols="100" rows="1" disabled></textarea>
         <p>Decrypted Plaintext</p> 
         <textarea name="" id="js-decrypted" cols="100" rows="1" readonly></textarea>
         <p>Decrypted from PHP cipher text</p> 
