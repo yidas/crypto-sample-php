@@ -72,36 +72,36 @@ $originalPlaintext = openssl_decrypt($chiperCgmBody, $cipher, $key, OPENSSL_RAW_
     
   
     <p>Plaintext</p>
-    <textarea name="" id="" cols="100" rows="1" readonly><?=$plaintext?></textarea>
-    <p>Key</p>
-    <textarea name="" id="" cols="100" rows="1" readonly><?=$key?></textarea>
+    <textarea name="" id="" cols="100" rows="1" disabled><?=$plaintext?></textarea>
+    <p>Key (Text)</p>
+    <input name="" id="" size="100" value="<?=$key?>" disabled></input>
     
     <h1>PHP</h1>
-    <p>Cipher Text</p> 
-    <textarea name="" id="" cols="100" rows="2" readonly><?=$ciphertext?></textarea>
-    <!-- <p>IV Text</p> 
-    <textarea name="" id="" cols="100" rows="1" readonly><?=$iv?></textarea> -->
-    <p>IV Text (Base64)</p> 
-    <textarea name="" id="" cols="100" rows="1" readonly><?=$ivText?></textarea>
+    <p>Cipher (Base64)</p> 
+    <textarea name="" id="" cols="100" rows="2" disabled><?=$ciphertext?></textarea>
+    <p>IV (Text)</p> 
+    <input name="" id="" size="100" value="<?=$iv?>" disabled></input>
+    <!-- <p>IV Text (Base64)</p> 
+    <input name="" id="" size="100" value="<?=$ivText?>" disabled></input> -->
     <p>Auth Tag (Base64)</p> 
-    <textarea name="" id="" cols="100" rows="1" readonly><?=base64_encode($tag)?></textarea>
+    <input name="" id="" size="100" value="<?=base64_encode($tag)?>" disabled></input>
     <p>Decrypted Plaintext</p> 
-    <textarea name="" id="" cols="100" rows="1" readonly><?=$originalPlaintext?></textarea>
+    <textarea name="" id="" cols="100" rows="1" disabled><?=$originalPlaintext?></textarea>
     <p>Decrypted from JS cipher text <font color="gray">(<?php if(isset($jsOriginalPlaintext)): ?>JS Cipher sent<?php else: ?>No data sent yet<?php endif ?>)</font></p> 
-    <textarea name="" id="" cols="100" rows="1" readonly><?=isset($jsOriginalPlaintext) ? $jsOriginalPlaintext : null?></textarea>
+    <textarea name="" id="" cols="100" rows="1" disabled><?=isset($jsOriginalPlaintext) ? $jsOriginalPlaintext : null?></textarea>
 
     <hr>
 
     <form action="" method="POST"> 
         <h1>Javascript</h1>
-        <p>Cipher Text</p> 
+        <p>Cipher (Base64))</p> 
         <textarea name="js_cipher_text" id="js-cipher-text" cols="100" rows="2"></textarea>
-        <p>IV Text (Hex)</p> 
-        <textarea name="js_iv" id="js-iv" cols="100" rows="1"></textarea>
+        <p>IV (Text)</p> 
+        <input name="js_iv" id="js-iv" size="100" rows="1"></input>
         <p>Decrypted Plaintext</p> 
-        <textarea name="" id="js-decrypted" cols="100" rows="1" readonly></textarea>
+        <textarea name="" id="js-decrypted" cols="100" rows="1" disabled></textarea>
         <p>Decrypted from PHP cipher text</p> 
-        <textarea name="" id="js-decrypted-from-php" cols="100" rows="1" readonly></textarea>
+        <textarea name="" id="js-decrypted-from-php" cols="100" rows="1" disabled></textarea>
         <br><br>
         <button type="submit">Send Cipher & IV to PHP for Decrypting</button>
         <button type="button" onclick="location.href=''">Reset</button>
@@ -188,7 +188,7 @@ $originalPlaintext = openssl_decrypt($chiperCgmBody, $cipher, $key, OPENSSL_RAW_
                 }
 
                 document.getElementById("js-cipher-text").innerHTML = base64CipherText;
-                document.getElementById("js-iv").innerHTML = iv;
+                document.getElementById("js-iv").value = iv;
                 // document.getElementById("js-salt").innerHTML = encrypted.salt.toString();
                 document.getElementById("js-decrypted").innerHTML = decryptedData;
                 document.getElementById("js-decrypted-from-php").innerHTML = decryptedDataForPHP;
