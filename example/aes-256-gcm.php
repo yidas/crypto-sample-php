@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 
 // Setting
 $cipher ="aes-256-gcm";
-$key = 'd41d8cd98f00b204e9800998ecf8427e';
+$key = '12345678901234567890123456789012';
 $tag = null;
 
 /**
