@@ -18,7 +18,7 @@ $tag = null;
 if ($_POST) {
 
     // Data fetching
-    $jsCipherText = isset($_POST['js_cipher_text']) ? $_POST['js_cipher_text'] : '';
+    $jsCipherText = isset($_POST['js_ciphertext']) ? $_POST['js_ciphertext'] : '';
     $ivFromJS = isset($_POST['js_iv']) ? $_POST['js_iv'] : '';
     
     // Decoding
@@ -70,46 +70,46 @@ $originalPlaintext = openssl_decrypt($chiperCgmBody, $cipher, $key, OPENSSL_RAW_
 </head>
 <body>
     
-  
-    <p>Plaintext</p>
-    <textarea name="" id="" cols="100" rows="1" disabled><?=$plaintext?></textarea>
-    <p>Key (Text)</p>
-    <input name="" id="" size="100" value="<?=$key?>" disabled></input>
+    <p>Key</p>
+    <input type="text" size="100" value="<?=$key?>" disabled>
     
     <h1>PHP</h1>
-    <p>Cipher (Base64)</p> 
+    <p>Plaintext</p>
+    <textarea name="" id="" cols="100" rows="1" disabled><?=$plaintext?></textarea>
+    <p>Ciphertext (Base64)</p> 
     <textarea name="" id="" cols="100" rows="2" disabled><?=$ciphertext?></textarea>
     <p>IV (Text)</p> 
-    <input name="" id="" size="100" value="<?=$iv?>" disabled></input>
+    <input type="text" size="100" value="<?=$iv?>" disabled>
     <!-- <p>IV Text (Base64)</p> 
-    <input name="" id="" size="100" value="<?=$ivText?>" disabled></input> -->
+    <textarea name="" id="" cols="100" rows="1" readonly><?=$ivText?></textarea> -->
     <p>Auth Tag (Base64)</p> 
-    <input name="" id="" size="100" value="<?=base64_encode($tag)?>" disabled></input>
+    <input type="text" size="100" value="<?=base64_encode($tag)?>" disabled>
     <p>Decrypted Plaintext</p> 
     <textarea name="" id="" cols="100" rows="1" disabled><?=$originalPlaintext?></textarea>
-    <p>Decrypted from JS cipher text <font color="gray">(<?php if(isset($jsOriginalPlaintext)): ?>JS Cipher sent<?php else: ?>No data sent yet<?php endif ?>)</font></p> 
+    <p>Decrypted from JS ciphertext <font color="gray">(<?php if(isset($jsOriginalPlaintext)): ?>JS Cipher sent<?php else: ?>No data sent yet<?php endif ?>)</font></p> 
     <textarea name="" id="" cols="100" rows="1" disabled><?=isset($jsOriginalPlaintext) ? $jsOriginalPlaintext : null?></textarea>
 
     <hr>
 
     <form action="" method="POST"> 
         <h1>Javascript</h1>
-        <p>Cipher (Base64))</p> 
-        <textarea name="js_cipher_text" id="js-cipher-text" cols="100" rows="2"></textarea>
+        <p>Plaintext</p>
+        <textarea name="js_plaintext" id="js-plaintext" cols="100" rows="1"><?=$plaintext?></textarea>
+        <p>Ciphertext (Base64)</p> 
+        <textarea name="js_ciphertext" id="js-ciphertext" cols="100" rows="2" readonly></textarea>
         <p>IV (Text)</p> 
-        <input name="js_iv" id="js-iv" size="100" rows="1"></input>
+        <input type="text" name="js_iv" id="js-iv"  size="100" value="">
         <p>Decrypted Plaintext</p> 
         <textarea name="" id="js-decrypted" cols="100" rows="1" disabled></textarea>
-        <p>Decrypted from PHP cipher text</p> 
+        <p>Decrypted from PHP ciphertext</p> 
         <textarea name="" id="js-decrypted-from-php" cols="100" rows="1" disabled></textarea>
         <br><br>
-        <button type="submit">Send Cipher & IV to PHP for Decrypting</button>
+        <button type="button" onclick="send(this.form)">Send Cipher & IV to PHP for Decrypting</button>
         <button type="button" onclick="location.href=''">Reset</button>
     </form>  
     
     <script>
         
-        var plaintext = "<?=$plaintext?>";
         var cipherTextFromPHP = "<?=$ciphertext?>";
         var key = "<?=$key?>";
         // var keyObj = CryptoJS.enc.Utf8.parse(key);
@@ -117,6 +117,14 @@ $originalPlaintext = openssl_decrypt($chiperCgmBody, $cipher, $key, OPENSSL_RAW_
         var ivFromPHP = "<?=$ivText?>";
         var iv = "123456789012";
         var base64CipherText;
+
+        function send(form) {
+            
+            process().then(result => {
+                form.submit();
+            });
+            return;
+        }
 
         function importKey(key) {
             return new Promise(function (resolve, reject) {
@@ -174,6 +182,7 @@ $originalPlaintext = openssl_decrypt($chiperCgmBody, $cipher, $key, OPENSSL_RAW_
         async function process() {
             try {
                 
+                var plaintext = document.getElementById("js-plaintext").value;
                 var cryptoKey = await importKey(key);
                 const encryptedData = await encryptData(cryptoKey, iv, plaintext);
                 console.log('Encrypted Data:', encryptedData);
@@ -187,7 +196,7 @@ $originalPlaintext = openssl_decrypt($chiperCgmBody, $cipher, $key, OPENSSL_RAW_
                     console.log(error);
                 }
 
-                document.getElementById("js-cipher-text").innerHTML = base64CipherText;
+                document.getElementById("js-ciphertext").value = base64CipherText;
                 document.getElementById("js-iv").value = iv;
                 // document.getElementById("js-salt").innerHTML = encrypted.salt.toString();
                 document.getElementById("js-decrypted").innerHTML = decryptedData;
