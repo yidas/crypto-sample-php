@@ -127,6 +127,8 @@ $decrypted = $rsa->decrypt($cipthertext);
 </head>
 <body>
     
+    <h1>RSA OAEP with SHA-256 & MGF1 with SHA-1</h1>
+
     <p>Private Key</p>
     <textarea name="" id="js-private-key"" cols="100" rows="3" disabled><?=$privateKey?></textarea>
     <br>
@@ -137,12 +139,12 @@ $decrypted = $rsa->decrypt($cipthertext);
     <button onclick="document.getElementById('js-public-key').value = pemToText(document.getElementById('js-public-key').value);">Transfer to Text</button>
     
     <hr>
-    <h1>OpenSSL Command</h1>
+    <h2>OpenSSL Command</h2>
     <input type="text" size="110" disabled value="$ openssl pkeyutl -encrypt -in plaintext.txt -out ciphertext.bin -pubin -inkey public-key-x509.pem -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -pkeyopt rsa_mgf1_md:sha1">
     <input type="text" size="110" disabled value="$ openssl pkeyutl -decrypt -in ciphertext.bin -out decrypted.txt -inkey private-key.pem -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -pkeyopt rsa_mgf1_md:sha1">
     <hr>
     
-    <h1>PHP</h1>
+    <h2>PHP</h2>
     <p>Plaintext</p>
     <textarea name="" id="" cols="100" rows="1" disabled><?=$plaintext?></textarea>
     <p>Ciphertext (Base64)</p> 
@@ -155,7 +157,7 @@ $decrypted = $rsa->decrypt($cipthertext);
     <hr>
 
     <form action="" method="POST"> 
-        <h1>Javascript</h1>
+        <h2>Javascript</h2>
         <p>Plaintext</p>
         <textarea name="js_plaintext" id="js-plaintext" cols="100" rows="1"><?=$plaintext?></textarea>
         <p>Ciphertext (Base64)</p> 
@@ -185,107 +187,6 @@ $decrypted = $rsa->decrypt($cipthertext);
                 form.submit();
             });
             return;
-        }
-
-        function pemToText(pemString) {
-            return pemString.replace(/^-.*\n|\n.*-$/g, '').replace(/\n/g, "");
-        }
-
-        function pemToDer(pemString) {
-            const pemContent = pemString.replace(/^-.*\n|\n.*-$/g, '').replace(/\n/g, "");
-            // base64 decode the string to get the binary data
-            console.log(pemContent)
-            const binaryDerString = window.atob(pemContent);
-            // str2ab
-            const buf = new ArrayBuffer(binaryDerString.length);
-            const bufView = new Uint8Array(buf);
-            for (let i = 0, strLen = binaryDerString.length; i < strLen; i++) {
-                bufView[i] = binaryDerString.charCodeAt(i);
-            }
-            return buf;
-        }
-
-        async function importKey(pemKey, keyUsages=["encrypt", "decrypt"]) {    
-            const binaryDer = await pemToDer(pemKey);
-            try {
-                return await crypto.subtle.importKey(
-                    "spki",
-                    binaryDer,
-                    { 
-                        name: 'RSA-OAEP', 
-                        modulusLength: 2048, //can be 1024, 2048, or 4096
-                        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-                        hash: {
-                            name: "SHA-256"
-                        }, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-                        mgf: { name: "MGF1", hash: { name: "SHA1" } }
-                    },
-                    false,
-                    keyUsages,
-                );
-            } catch (error) {
-                console.log(error)
-                throw error;
-            }
-        }
-
-        async function importPrivateKey(pemKey) {
-            const binaryDer = await pemToDer(pemKey);
-            try {
-                return await crypto.subtle.importKey(
-                    "pkcs8",
-                    binaryDer,
-                    {
-                        name: "RSA-OAEP",
-                        modulusLength: 2048, //can be 1024, 2048, or 4096
-                        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-                        hash: {
-                            name: "SHA-256"
-                        }, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
-                        mgf: { name: "MGF1", hash: { name: "SHA-256" } },
-                    },
-                    false,
-                    ["decrypt"],
-                );
-            } catch (error) {
-                console.log(error)
-                throw error;
-            }
-        }
-
-        function encryptData(publicKey, data) {
-            return new Promise(function (resolve, reject) {
-                crypto.subtle.encrypt(
-                    {
-                        name: 'RSA-OAEP'
-                    },
-                    publicKey,
-                    new TextEncoder().encode(data)
-                ).then(function (encrypted) {
-                    // 將加密後的 ArrayBuffer 傳遞給下一個 then
-                    base64CipherText = btoa(String.fromCharCode.apply(null, new Uint8Array(encrypted)));
-                    resolve(base64CipherText);
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        }
-
-        function decryptData(key, data) {
-            return new Promise(function (resolve, reject) {
-                crypto.subtle.decrypt(
-                    {
-                        name: 'RSA-OAEP',
-                    },
-                    key,
-                    data
-                ).then(function (decryptedBuffer) {
-                    decrypted = new TextDecoder().decode(decryptedBuffer);
-                    resolve(decrypted);
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
         }
 
         async function process() {

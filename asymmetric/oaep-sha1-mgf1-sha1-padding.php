@@ -125,6 +125,8 @@ $decrypted = $rsa->decrypt($cipthertext);
 </head>
 <body>
     
+    <h1>RSA OAEP with SHA-1 & MGF1 with SHA-1</h1>
+
     <p>Private Key</p>
     <textarea name="" id="js-private-key"" cols="100" rows="3" disabled><?=$privateKey?></textarea>
     <br>
@@ -135,12 +137,12 @@ $decrypted = $rsa->decrypt($cipthertext);
     <button onclick="document.getElementById('js-public-key').value = pemToText(document.getElementById('js-public-key').value);">Transfer to Text</button>
     
     <hr>
-    <h1>OpenSSL Command</h1>
+    <h2>OpenSSL Command</h2>
     <input type="text" size="110" disabled value="$ openssl pkeyutl -encrypt -in plaintext.txt -out ciphertext.bin -pubin -inkey public-key-x509.pem -pkeyopt rsa_padding_mode:oaep">
     <input type="text" size="110" disabled value="$ openssl pkeyutl -decrypt -in ciphertext.bin -out decrypted.txt -inkey private-key.pem -pkeyopt rsa_padding_mode:oaep">
     <hr>
 
-    <h1>PHP</h1>
+    <h2>PHP</h2>
     <p>Plaintext</p>
     <textarea name="" id="" cols="100" rows="1" disabled><?=$plaintext?></textarea>
     <p>Ciphertext (Base64)</p> 
@@ -153,7 +155,7 @@ $decrypted = $rsa->decrypt($cipthertext);
     <hr>
 
     <form action="" method="POST"> 
-        <h1>Javascript</h1>
+        <h2>Javascript</h2>
         <p>Plaintext</p>
         <textarea name="js_plaintext" id="js-plaintext" cols="100" rows="1"><?=$plaintext?></textarea>
         <p>Ciphertext (Base64)</p> 
