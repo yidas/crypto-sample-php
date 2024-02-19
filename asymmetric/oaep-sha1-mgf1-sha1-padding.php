@@ -134,6 +134,12 @@ $decrypted = $rsa->decrypt($cipthertext);
     <br>
     <button onclick="document.getElementById('js-public-key').value = pemToText(document.getElementById('js-public-key').value);">Transfer to Text</button>
     
+    <hr>
+    <h1>OpenSSL Command</h1>
+    <input type="text" size="110" disabled value="$ openssl pkeyutl -encrypt -in plaintext.txt -out ciphertext.bin -pubin -inkey public-key-x509.pem -pkeyopt rsa_padding_mode:oaep">
+    <input type="text" size="110" disabled value="$ openssl pkeyutl -decrypt -in ciphertext.bin -out decrypted.txt -inkey private-key.pem -pkeyopt rsa_padding_mode:oaep">
+    <hr>
+
     <h1>PHP</h1>
     <p>Plaintext</p>
     <textarea name="" id="" cols="100" rows="1" disabled><?=$plaintext?></textarea>
