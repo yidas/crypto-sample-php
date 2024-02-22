@@ -10,6 +10,19 @@ It's a simple implementation of handing encryption and decryption with AES symme
 
 ---
 
+INSTALLATION
+------------
+
+Download repository and run Composer install in your Web directory:
+
+```
+$ git clone https://github.com/yidas/crypto-sample-php;
+$ cd crypto-sample-php;
+$ composer install;
+```
+
+---
+
 CONCEPTION
 ----------
 
